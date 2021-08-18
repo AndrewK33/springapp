@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -19,4 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("select p from Product p where p.price <= :maxPrice")
     List<Product> findAllByLessThanMaxPrice(int maxPrice);
+
+    @Query()
+    void deleteById(Long id);
 }
