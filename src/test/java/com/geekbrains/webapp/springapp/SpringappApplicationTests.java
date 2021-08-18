@@ -1,4 +1,4 @@
-package om.geekbrains.webapp.springapp;
+package com.geekbrains.webapp.springapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
