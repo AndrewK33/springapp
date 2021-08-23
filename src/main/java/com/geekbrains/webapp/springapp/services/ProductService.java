@@ -4,6 +4,8 @@ import com.geekbrains.webapp.springapp.models.Product;
 import com.geekbrains.webapp.springapp.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,8 +19,8 @@ public class ProductService {
     private final ProductRepository productRepository;
 
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public Page<Product> findAll(int pageIndex, int pageSize) {
+        return productRepository.findAll(PageRequest.of(pageIndex, pageSize));
     }
 
     public Optional<Product> findById(Long id) {

@@ -1,12 +1,17 @@
 package com.geekbrains.webapp.springapp.controllers;
 
+import com.geekbrains.webapp.springapp.dtos.ProductDto;
+import com.geekbrains.webapp.springapp.models.Category;
 import com.geekbrains.webapp.springapp.models.Product;
 import com.geekbrains.webapp.springapp.repositories.ProductRepository;
+import com.geekbrains.webapp.springapp.services.CategoryService;
 import com.geekbrains.webapp.springapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,48 +19,56 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final CategoryService categoryService;
 
 
     @GetMapping("/products")
-    public List<Product> findAll() {
-        return productService.findAll();
+    public Page<ProductDto> findAll(@RequestParam(defaultValue = "1", name = "p") int pageIndex) {
+        if (pageIndex < 1) {
+            pageIndex = 1;
+        }
+        return productService.findAll(pageIndex - 1, 20).map(ProductDto::new);
     }
 
     @GetMapping("/products/{id}")
-    public Product findById(@PathVariable Long id) {
-        return productService.findById(id).get();
+    public ProductDto findById(@PathVariable Long id) {
+        return new ProductDto(productService.findById(id).get());
     }
 
-    @GetMapping (value = "/products/filter")
-    public List<Product> findAllByPrice(@RequestParam(name = "min_price") int minPrice, @RequestParam(name = "max_price") int maxPrice) {
-        return productService.findAllByPrice(minPrice, maxPrice);
+    @GetMapping(value = "/products/filter")
+    public List<ProductDto> findAllByPrice(@RequestParam(name = "min_price") int minPrice, @RequestParam(name = "max_price") int maxPrice) {
+        List<Product> productList = productService.findAllByPrice(minPrice, maxPrice);
+        return ProductDto.mapperDto(productList);
     }
 
     @GetMapping(value = "/products/filter", params = "!max_price")
-    public List<Product> findAllByMoreThanMinPrice(@RequestParam(name = "min_price") int minPrice) {
-        return productService.findAllByMoreThanMinPrice(minPrice);
+    public List<ProductDto> findAllByMoreThanMinPrice(@RequestParam(name = "min_price") int minPrice) {
+        List<Product> productList = productService.findAllByMoreThanMinPrice(minPrice);
+        return ProductDto.mapperDto(productList);
     }
 
     @GetMapping(value = "/products/filter", params = "!min_price")
-    public List<Product> findAllByLessThanMaxPrice(@RequestParam(name = "max_price")int maxPrice) {
-        return productService.findAllByLessThanMaxPrice(maxPrice);
+    public List<ProductDto> findAllByLessThanMaxPrice(@RequestParam(name = "max_price") int maxPrice) {
+        List<Product> productList = productService.findAllByLessThanMaxPrice(maxPrice);
+        return ProductDto.mapperDto(productList);
     }
 
     @PostMapping(value = "/products")
-    public Product save(@RequestBody Product product) {
+    public ProductDto save(@RequestBody ProductDto productDto) {
         Product newProduct = new Product();
-        newProduct.setTitle(product.getTitle());
-        newProduct.setPrice(product.getPrice());
+        newProduct.setTitle(productDto.getTitle());
+        newProduct.setPrice(productDto.getPrice());
+        Category category = categoryService.findByTitle(productDto.getCategoryTitle()).get();
+        newProduct.setCategory(category);
         productService.save(newProduct);
-        return newProduct;
+        return new ProductDto(newProduct);
     }
 
-    @GetMapping("/products/delete/{id}")
-    public Optional<Product> deleteById(@PathVariable Long id) {
-       productService.delete(id);
-       return productService.findById(id);
+    @DeleteMapping("/products/delete/{id}")
+    public boolean deleteById(@PathVariable Long id) {
+        productService.delete(id);
+        return true;
     }
-
 
 
 }
