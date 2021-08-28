@@ -17,11 +17,11 @@
     <table class="table" id="productsTable">
         <thead>
         <tr>
-            <td>id</td>
-            <td>title</td>
-            <td>price</td>
-            <td>actions</td>
-            <td>actions2</td>
+            <td>Id</td>
+            <td>Title</td>
+            <td>Price</td>
+            <td></td>
+            <td></td>
         </tr>
         </thead>
         <tbody>
@@ -30,15 +30,36 @@
             <td>{{p.title}}</td>
             <td>{{p.price}}</td>
             <td>
-                <button class="btn btn-primary" ng-click="showInfo(p)">info</button>
+                <button class="btn btn-primary" ng-click="showInfo(p)">Info</button>
             </td>
             <td>
-                <button class="btn btn-primary" ng-click="deleteProduct(p,$index)">delete</button>
+                <button class="btn btn-primary" ng-click="deleteProduct(p,$index)">Delete</button>
             </td>
         </tr>
         </tbody>
     </table>
-    <button class="btn btn-primary" ng-click="loadProducts()">refresh</button>
+
+
+    <p></p>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" ng-repeat="pageIndex in paginationArray">
+                <a class="page-link" ng-click="loadProducts(pageIndex)">{{pageIndex}}</a>
+            </li>
+        </ul>
+    </nav>
+    <p></p>
+    <h3>Create new product</h3>
+    <form novalidate ng-submit="createNewProduct()">
+        <input class="form-control" type="text" placeholder="Product title" ng-model="new_product.title">
+        <p></p>
+        <input class="form-control" type="number" placeholder="Product price" ng-model="new_product.price">
+        <p></p>
+        <input class="form-control" type="text" placeholder="Category name" ng-model="new_product.categoryTitle">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Create</button>
+        <p></p>
+    </form>
 </div>
 </body>
 </html>
