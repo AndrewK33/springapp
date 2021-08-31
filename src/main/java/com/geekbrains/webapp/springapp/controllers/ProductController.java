@@ -1,21 +1,16 @@
 package com.geekbrains.webapp.springapp.controllers;
 
 import com.geekbrains.webapp.springapp.dtos.ProductDto;
-import com.geekbrains.webapp.springapp.exceptions.MarketError;
-import com.geekbrains.webapp.springapp.exceptions.ResourseNotFoundException;
+import com.geekbrains.webapp.springapp.exceptions.ResourceNotFoundException;
 import com.geekbrains.webapp.springapp.models.Category;
 import com.geekbrains.webapp.springapp.models.Product;
-import com.geekbrains.webapp.springapp.repositories.ProductRepository;
+import com.geekbrains.webapp.springapp.models.ProductCart;
 import com.geekbrains.webapp.springapp.services.CategoryService;
 import com.geekbrains.webapp.springapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +20,29 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final ProductCart productCart;
+
+    @GetMapping("/productCart")
+    public List<Optional<Product>> getCart() {
+        return productCart.printCart();
+    }
+
+    @PostMapping("/productCart")
+    public void addProductInCart(@RequestParam Long id) {
+        Optional<Product> product = productService.findById(id);
+        productCart.addProduct(product);
+    }
+
+    @GetMapping("/productCart/clearCart")
+    public void clearCart() {
+        productCart.clearCart();
+    }
+
+    @PostMapping("/productCart/deleteProductInCart}")
+    public void deleteProductInCart(@RequestParam Long id) {
+        productCart.deleteProduct(id);
+    }
+
 
 
     @GetMapping
@@ -37,7 +55,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ProductDto findById(@PathVariable Long id) {
-        Product product = productService.findById(id).orElseThrow(() -> new ResourseNotFoundException("Product id = " + id + " not found"));
+        Product product = productService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product id = " + id + " not found"));
         return new ProductDto(product);
     }
 
@@ -64,10 +82,15 @@ public class ProductController {
         Product newProduct = new Product();
         newProduct.setTitle(productDto.getTitle());
         newProduct.setPrice(productDto.getPrice());
-        Category category = categoryService.findByTitle(productDto.getCategoryTitle()).orElseThrow(() -> new ResourseNotFoundException("Category title = " + productDto.getCategoryTitle() + " not found"));
+        Category category = categoryService.findByTitle(productDto.getCategoryTitle()).orElseThrow(() -> new ResourceNotFoundException("Category title = " + productDto.getCategoryTitle() + " not found"));
         newProduct.setCategory(category);
         productService.save(newProduct);
         return new ProductDto(newProduct);
+    }
+
+    @PutMapping
+    public void updateProduct(@RequestBody ProductDto productDto) {
+        productService.updateProductFromDto(productDto);
     }
 
     @DeleteMapping("/delete/{id}")

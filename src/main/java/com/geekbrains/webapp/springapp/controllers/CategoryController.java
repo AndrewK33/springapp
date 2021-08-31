@@ -1,9 +1,8 @@
 package com.geekbrains.webapp.springapp.controllers;
 
 import com.geekbrains.webapp.springapp.dtos.CategoryDto;
-import com.geekbrains.webapp.springapp.exceptions.ResourseNotFoundException;
+import com.geekbrains.webapp.springapp.exceptions.ResourceNotFoundException;
 import com.geekbrains.webapp.springapp.models.Category;
-import com.geekbrains.webapp.springapp.models.Product;
 import com.geekbrains.webapp.springapp.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public CategoryDto findById(@PathVariable Long id){
-        Category category = categoryService.findById(id).orElseThrow(() -> new ResourseNotFoundException("Category id = " + id + " not found"));
+        Category category = categoryService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category id = " + id + " not found"));
         return new CategoryDto(category);
     }
 
