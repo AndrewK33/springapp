@@ -14,11 +14,9 @@ import java.util.stream.Collectors;
 public class CategoryDto {
     private Long id;
     private String title;
-    private List<ProductDto> product;
 
     public CategoryDto(Category category) {
         this.id = category.getId();;
         this.title = category.getTitle();;
-        this.product = category.getProducts().stream().map(ProductDto::new).collect(Collectors.toList());
     }
 }

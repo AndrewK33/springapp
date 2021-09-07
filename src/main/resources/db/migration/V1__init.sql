@@ -1,6 +1,6 @@
 create table categories
 (
-    id bigserial primary key,
+    id    bigserial primary key,
     title varchar(256)
 );
 insert into categories (title)
@@ -8,9 +8,9 @@ values ('Food');
 
 create table products
 (
-    id bigserial primary key,
-    title varchar(256),
-    price int,
+    id          bigserial primary key,
+    title       varchar(256),
+    price       int,
     category_id bigint REFERENCES categories (id)
 );
 insert into products (title, price, category_id)
@@ -36,37 +36,38 @@ values ('Bread', 25, 1),
        ('Butter', 20, 1);
 
 
-create table users (
-                       id                    bigserial,
-                       username              varchar(30) not null unique,
-                       password              varchar(80) not null,
-                       primary key (id)
+create table users
+(
+    id       bigserial,
+    username varchar(30) not null unique,
+    password varchar(80) not null,
+    primary key (id)
 );
 
-create table roles (
-                       id                    serial,
-                       name                  varchar(50) not null,
-                       primary key (id)
+create table roles
+(
+    id   serial,
+    name varchar(50) not null,
+    primary key (id)
 );
 
-CREATE TABLE users_roles (
-                             user_id               bigint not null,
-                             role_id               int not null,
-                             primary key (user_id, role_id),
-                             foreign key (user_id) references users (id),
-                             foreign key (role_id) references roles (id)
+CREATE TABLE users_roles
+(
+    user_id bigint not null,
+    role_id int    not null,
+    primary key (user_id, role_id),
+    foreign key (user_id) references users (id),
+    foreign key (role_id) references roles (id)
 );
 
 insert into roles (name)
-values
-    ('ROLE_USER'), ('ROLE_ADMIN');
+values ('ROLE_USER'),
+       ('ROLE_ADMIN');
 
 insert into users (username, password)
-values
-    ('John', '$2a$12$q5Md4RhypYpk80GCyluqQ.VISKSyydg9iJsxe4x7m4PXQqcwolqi6'),
-    ('Bob', '$2a$12$q5Md4RhypYpk80GCyluqQ.VISKSyydg9iJsxe4x7m4PXQqcwolqi6');
+values ('John', '$2a$12$q5Md4RhypYpk80GCyluqQ.VISKSyydg9iJsxe4x7m4PXQqcwolqi6'),
+       ('Bob', '$2a$12$q5Md4RhypYpk80GCyluqQ.VISKSyydg9iJsxe4x7m4PXQqcwolqi6');
 
 insert into users_roles (user_id, role_id)
-values
-    (1, 1),
-    (2, 2);
+values (1, 1),
+       (2, 2);

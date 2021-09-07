@@ -10,9 +10,9 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 public class ProductCart {
-    private List<Optional<Product>> productList = new ArrayList<>();
+    private List<Product> productList = new ArrayList<>();
 
-    public void addProduct(Optional<Product> product) {
+    public void addProduct(Product product) {
         productList.add(product);
     }
 

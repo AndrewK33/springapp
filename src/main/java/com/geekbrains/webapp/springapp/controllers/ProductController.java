@@ -2,6 +2,7 @@ package com.geekbrains.webapp.springapp.controllers;
 
 import com.geekbrains.webapp.springapp.dtos.ProductDto;
 import com.geekbrains.webapp.springapp.exceptions.ResourceNotFoundException;
+import com.geekbrains.webapp.springapp.mappers.ProductMapper;
 import com.geekbrains.webapp.springapp.models.Category;
 import com.geekbrains.webapp.springapp.models.Product;
 import com.geekbrains.webapp.springapp.models.ProductCart;
@@ -21,6 +22,7 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ProductCart productCart;
+    private final ProductMapper productMapper;
 
     @GetMapping("/productCart")
     public List<Product> getCart() {
@@ -30,7 +32,7 @@ public class ProductController {
     @PostMapping("/productCart")
     public void addProductInCart(@RequestParam Long id) {
         Optional<Product> product = productService.findById(id);
-        productCart.addProduct(product);
+        product.ifPresent(productCart::addProduct);
     }
 
     @GetMapping("/productCart/clearCart")
@@ -62,19 +64,19 @@ public class ProductController {
     @GetMapping(value = "/filter")
     public List<ProductDto> findAllByPrice(@RequestParam(name = "min_price") int minPrice, @RequestParam(name = "max_price") int maxPrice) {
         List<Product> productList = productService.findAllByPrice(minPrice, maxPrice);
-        return ProductDto.mapperDto(productList);
+        return productMapper.map(productList);
     }
 
     @GetMapping(value = "/filter", params = "!max_price")
     public List<ProductDto> findAllByMoreThanMinPrice(@RequestParam(name = "min_price") int minPrice) {
         List<Product> productList = productService.findAllByMoreThanMinPrice(minPrice);
-        return ProductDto.mapperDto(productList);
+        return productMapper.map(productList);
     }
 
     @GetMapping(value = "/filter", params = "!min_price")
     public List<ProductDto> findAllByLessThanMaxPrice(@RequestParam(name = "max_price") int maxPrice) {
         List<Product> productList = productService.findAllByLessThanMaxPrice(maxPrice);
-        return ProductDto.mapperDto(productList);
+        return productMapper.map(productList);
     }
 
     @PostMapping
@@ -85,7 +87,7 @@ public class ProductController {
         Category category = categoryService.findByTitle(productDto.getCategoryTitle()).orElseThrow(() -> new ResourceNotFoundException("Category title = " + productDto.getCategoryTitle() + " not found"));
         newProduct.setCategory(category);
         productService.save(newProduct);
-        return new ProductDto(newProduct);
+        return productMapper.map(newProduct);
     }
 
     @PutMapping

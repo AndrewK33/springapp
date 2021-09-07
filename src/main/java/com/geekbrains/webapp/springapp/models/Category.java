@@ -18,9 +18,4 @@ public class Category {
 
     @Column(name = "title")
     private String title;
-
-    @OneToMany (mappedBy = "category")
-    private List<Product> products;
-
-
 }
