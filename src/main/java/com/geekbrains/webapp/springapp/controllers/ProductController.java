@@ -23,7 +23,7 @@ public class ProductController {
     private final ProductCart productCart;
 
     @GetMapping("/productCart")
-    public List<Optional<Product>> getCart() {
+    public List<Product> getCart() {
         return productCart.printCart();
     }
 
@@ -39,7 +39,7 @@ public class ProductController {
     }
 
     @PostMapping("/productCart/deleteProductInCart}")
-    public void deleteProductInCart(@RequestParam Long id) {
+    public void deleteProductInCart(@RequestParam int id) {
         productCart.deleteProduct(id);
     }
 

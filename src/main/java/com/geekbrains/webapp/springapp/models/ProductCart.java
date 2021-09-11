@@ -16,7 +16,7 @@ public class ProductCart {
         productList.add(product);
     }
 
-    public void deleteProduct(Long id) {
+    public void deleteProduct(int id) {
         productList.remove(id);
     }
 
@@ -24,7 +24,7 @@ public class ProductCart {
         productList.clear();
     }
 
-    public List<Optional<Product>> printCart(){
+    public List<Product> printCart(){
         return productList;
     }
 
