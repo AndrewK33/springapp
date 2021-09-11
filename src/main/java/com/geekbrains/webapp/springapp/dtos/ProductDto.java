@@ -34,12 +34,4 @@ public class ProductDto {
     }
 
 
-    public static List<ProductDto> mapperDto (List<Product> productList){
-        List<ProductDto> productDtoList = new ArrayList<>();
-        for (Product p : productList) {
-            productDtoList.add(new ProductDto(p));
-        }
-        return productDtoList;
-    }
-
 }
