@@ -41,6 +41,15 @@ angular.module('market-front').controller('storeController', function ($scope, $
         );
     };
 
+    $scope.addToCart = function (productId) {
+        $http({
+            url: contextPath + 'api/v1/cart/add/' + productId,
+            method: 'GET'
+        }).then(function (response) {
+        });
+    };
+
+
     $scope.navToEditProductPage = function (productId) {
         $location.path('/edit_product/' + productId);
     }

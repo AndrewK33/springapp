@@ -5,7 +5,6 @@ import com.geekbrains.webapp.springapp.exceptions.ResourceNotFoundException;
 import com.geekbrains.webapp.springapp.mappers.ProductMapper;
 import com.geekbrains.webapp.springapp.models.Category;
 import com.geekbrains.webapp.springapp.models.Product;
-import com.geekbrains.webapp.springapp.models.ProductCart;
 import com.geekbrains.webapp.springapp.services.CategoryService;
 import com.geekbrains.webapp.springapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping ("/api/v1/products")
@@ -21,29 +19,7 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final ProductCart productCart;
     private final ProductMapper productMapper;
-
-    @GetMapping("/productCart")
-    public List<Product> getCart() {
-        return productCart.printCart();
-    }
-
-    @PostMapping("/productCart")
-    public void addProductInCart(@RequestParam Long id) {
-        Optional<Product> product = productService.findById(id);
-        product.ifPresent(productCart::addProduct);
-    }
-
-    @GetMapping("/productCart/clearCart")
-    public void clearCart() {
-        productCart.clearCart();
-    }
-
-    @PostMapping("/productCart/deleteProductInCart}")
-    public void deleteProductInCart(@RequestParam int id) {
-        productCart.deleteProduct(id);
-    }
 
 
 
