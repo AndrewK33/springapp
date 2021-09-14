@@ -1,0 +1,37 @@
+<div>
+    <p></p>
+    <h3>Оформление заказа</h3>
+    <span ng-show="cart.items.length == 0">Заказ пуст</span>
+    <table class="table" ng-show="cart.items.length > 0">
+        <thead>
+        <tr>
+            <td>Название</td>
+            <td>Количество</td>
+            <td>Сумма</td>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="i in cart.items">
+            <td>{{i.productTitle}}</td>
+            <td>{{i.quantity}}</td>
+            <td>{{i.price}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>{{'Total: ' + cart.totalPrice}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <p ng-show="cart.items.length > 0">Реквизиты для оформления заказа</p>
+    <form novalidate ng-submit="createOrder()" ng-show="cart.items.length > 0">
+        <input class="form-control" type="text" placeholder="Номер телефона" ng-model="orderDetails.phone">
+        <p></p>
+        <input class="form-control" type="text" placeholder="Адресс доставки" ng-model="orderDetails.address">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Оформить заказ</button>
+    </form>
+
+
+</div>
