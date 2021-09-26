@@ -1,6 +1,7 @@
-package com.geekbrains.webapp.springapp.models;
+package com.geekbrains.webapp.springapp.utils;
 
 import com.geekbrains.webapp.springapp.dtos.OrderItemDto;
+import com.geekbrains.webapp.springapp.models.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -65,4 +66,24 @@ public class Cart {
             totalPrice += i.getPrice();
         }
     }
+
+    public void merge(Cart another) {
+        for (OrderItemDto anotherItem: another.items) {
+            boolean merged = false;
+            for (OrderItemDto myItem: items) {
+                if (myItem.getProductId().equals(anotherItem.getProductId())) {
+                    myItem.changeQuantity(anotherItem.getQuantity());
+                    merged = true;
+                    break;
+                }
+            }
+            if (!merged){
+                items.add(anotherItem);
+            }
+        }
+        recalculate();
+        another.clear();
+    }
+
+
 }

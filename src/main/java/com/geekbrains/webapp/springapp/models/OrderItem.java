@@ -1,31 +1,37 @@
 package com.geekbrains.webapp.springapp.models;
 
+import com.geekbrains.webapp.springapp.dtos.OrderItemDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-@Entity
-@Table(name = "orders_items")
 @Data
 @NoArgsConstructor
+@Entity
+@Table(name = "order_items")
 public class OrderItem {
     @Id
-    @Column(name = "product_id")
-    private Long productId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "product_title")
-    private String productTitle;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @Column(name = "quantity")
     private int quantity;
 
+    @Column(name = "price_per_product")
+    private int pricePerProduct;
+
     @Column(name = "price")
     private int price;
 
-    @Column(name = "price_per_product")
-    private int pricePerProduct;
+
 }

@@ -1,64 +1,91 @@
 package com.geekbrains.webapp.springapp.services;
 
-import com.geekbrains.webapp.springapp.dtos.OrderDetailsDto;
+
 import com.geekbrains.webapp.springapp.exceptions.ResourceNotFoundException;
-/*import com.geekbrains.webapp.springapp.mappers.OrderMapper;*/
-import com.geekbrains.webapp.springapp.mappers.OrderMapper;
-import com.geekbrains.webapp.springapp.models.Cart;
-import com.geekbrains.webapp.springapp.models.Order;
+import com.geekbrains.webapp.springapp.utils.Cart;
 import com.geekbrains.webapp.springapp.models.Product;
-import com.geekbrains.webapp.springapp.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
+import java.security.Principal;
+
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
     private final ProductService productService;
-    private Cart cart;
-    private final OrderMapper orderMapper;
-    private final OrderRepository orderRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    //RequestContextHolder.currentRequestAttributes().getSessionId(); уникальный ключ в пределах сессии
+    private static final String REDIS_CART_PREFIX = "WEB_APP_MARKET_CART_";
 
-    @PostConstruct
-    public  void  init() {
-        this.cart = new Cart();
+    private String getCartKey(Principal principal, String uuid) {
+        if (principal != null) {
+            return  REDIS_CART_PREFIX + principal.getName();
+        }
+        return  REDIS_CART_PREFIX + uuid;
     }
 
-    public void saveOrder(OrderDetailsDto orderDetailsDto) {
-        Order newOrder = orderMapper.map(orderDetailsDto);
-        orderRepository.save(newOrder);
-    }
-
-
-
-    public Cart getCartForCurrentUser() {
+    public Cart getCartForCurrentUser(Principal principal, String uuid) {
+        String cartKey = getCartKey(principal, uuid);
+        if (!redisTemplate.hasKey(cartKey)) {
+            redisTemplate.opsForValue().set(cartKey, new Cart());
+        }
+        Cart cart = (Cart) redisTemplate.opsForValue().get(cartKey);
         return cart;
     }
 
+    public Cart getCartByKey(String key) {
+        if (!redisTemplate.hasKey(REDIS_CART_PREFIX + key)) {
+            redisTemplate.opsForValue().set( REDIS_CART_PREFIX + key, new Cart());
+        }
+        return (Cart) redisTemplate.opsForValue().get(REDIS_CART_PREFIX + key);
+    }
 
-    public void addItem(Long productId) {
-        if (cart.add(productId)){
+    public void updateCart(Principal principal, String uuid, Cart cart) {
+        String cartKey = getCartKey(principal, uuid);
+        redisTemplate.opsForValue().set(cartKey, cart);
+    }
+
+    public void updateCartByKey(String key, Cart cart) {
+        redisTemplate.opsForValue().set(REDIS_CART_PREFIX + key, cart);
+    }
+
+    public void addItem(Principal principal, String uuid, Long productId) {
+        Cart cart = getCartForCurrentUser(principal, uuid);
+        if (cart.add(productId)) {
+            updateCart(principal, uuid, cart);
             return;
         }
-        Product product = productService.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Невозможно добавить продукт в корзину по данному id:" + productId));
+        Product product = productService.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Невозможно добавить продукт в корзину, так как продукт с id: " + productId + " не существует"));
         cart.add(product);
+        updateCart(principal, uuid, cart);
     }
 
-    public void removeItem (Long productId) {
+    public void removeItem(Principal principal, String uuid, Long productId) {
+        Cart cart = getCartForCurrentUser(principal, uuid);
         cart.remove(productId);
+        updateCart(principal, uuid, cart);
     }
 
-    public void decrementItem (Long productId) {
+    public void decrementItem(Principal principal, String uuid, Long productId) {
+        Cart cart = getCartForCurrentUser(principal, uuid);
         cart.decrement(productId);
+        updateCart(principal, uuid, cart);
     }
 
-
-    public void clearCart() {
+    public void clearCart(Principal principal, String uuid) {
+        Cart cart = getCartForCurrentUser(principal, uuid);
         cart.clear();
+        updateCart(principal, uuid, cart);
+    }
+
+    public void merge(Principal principal, String uuid) {
+        Cart guestCart = getCartByKey(uuid);
+        Cart userCart = getCartByKey(principal.getName());
+        userCart.merge(guestCart);
+        updateCartByKey(principal.getName(), userCart);
+        updateCartByKey(uuid, guestCart);
+
     }
 }

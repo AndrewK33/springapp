@@ -1,37 +1,53 @@
 package com.geekbrains.webapp.springapp.models;
 
-import com.geekbrains.webapp.springapp.dtos.OrderItemDto;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
+
 @Data
 @NoArgsConstructor
+@Entity
+@Table(name = "orders")
+@NamedEntityGraph(
+        name = "orders.for-front",
+        attributeNodes = {
+                @NamedAttributeNode(value = "items", subgraph = "items-products")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "items-products",
+                        attributeNodes = {
+                                @NamedAttributeNode("product")
+                        }
+                )
+        }
+)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long orderId;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "order_time_stamp")
-    private LocalDateTime orderTimeStamp;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @ManyToMany
-    @JoinTable(name = "order_items",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private Collection<Product> orderItems;
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.ALL})
+    private List<OrderItem> items;
+
+    @Column(name = "address")
+    private String address;
 
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "price")
+    private int price;
+
+
 
 }

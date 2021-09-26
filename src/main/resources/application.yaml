@@ -23,3 +23,5 @@ jwt:
   secret: dksmdkjasndkjnk132aidsjadni1ndiushd
   lifetime: 36000000
 
+memurai:
+  port: 6379

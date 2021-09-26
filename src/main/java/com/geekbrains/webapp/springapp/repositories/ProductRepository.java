@@ -9,9 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    Optional<Product> findByTitle(String title);
 
     @Query("select p from Product p where p.price >= :minPrice and p.price <= :maxPrice")
     List<Product> findAllByPrice(int minPrice, int maxPrice);

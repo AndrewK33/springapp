@@ -76,23 +76,32 @@ values (1, 1),
        (2, 2);
 
 
+
 create table orders
 (
-    order_id bigserial primary key,
-    order_time_stamp date,
-    phone varchar,
-    address varchar
+    id      bigserial primary key,
+    user_id bigint references users (id),
+    address varchar(255),
+    phone   varchar(255),
+    price   integer
+
 );
 
 create table order_items
 (
-    product_id int not null,
-    order_id int not null,
-    product_title varchar,
-    quantity int,
-    price int,
-    price_per_product int,
-    foreign key (product_id) references products (id),
-    foreign key (order_id) references orders (order_id)
+    id                bigserial primary key,
+    order_id          bigint references orders (id),
+    product_id        bigint references products (id),
+    quantity          integer,
+    price_per_product integer,
+    price             integer
+
 );
+
+insert into orders(user_id, address, phone, price)
+values (1, '1111', '111', 100);
+
+insert into order_items (order_id, product_id, quantity, price_per_product, price)
+values (1, 1, 4, 25, 100);
+
 

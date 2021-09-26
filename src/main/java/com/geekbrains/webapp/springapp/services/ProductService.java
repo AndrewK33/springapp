@@ -63,4 +63,8 @@ public class ProductService {
     public void delete(Long id) {
         productRepository.deleteById(id);
     }
+
+    public Optional<Product> findByTitle(String title) {
+        return productRepository.findByTitle(title);
+    }
 }
