@@ -44,6 +44,7 @@ create table users
     primary key (id)
 );
 
+
 create table roles
 (
     id   serial,
@@ -60,6 +61,8 @@ CREATE TABLE users_roles
     foreign key (role_id) references roles (id)
 );
 
+
+
 insert into roles (name)
 values ('ROLE_USER'),
        ('ROLE_ADMIN');
@@ -71,3 +74,25 @@ values ('John', '$2a$12$q5Md4RhypYpk80GCyluqQ.VISKSyydg9iJsxe4x7m4PXQqcwolqi6'),
 insert into users_roles (user_id, role_id)
 values (1, 1),
        (2, 2);
+
+
+create table orders
+(
+    order_id bigserial primary key,
+    order_time_stamp date,
+    phone varchar,
+    address varchar
+);
+
+create table order_items
+(
+    product_id int not null,
+    order_id int not null,
+    product_title varchar,
+    quantity int,
+    price int,
+    price_per_product int,
+    foreign key (product_id) references products (id),
+    foreign key (order_id) references orders (order_id)
+);
+

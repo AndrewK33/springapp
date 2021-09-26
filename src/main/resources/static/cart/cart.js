@@ -37,5 +37,13 @@ angular.module('market-front').controller('cartController', function ($scope, $h
         });
     };
 
+    $scope.checkOut = function () {
+        $location.path("/order_confirmation");
+    }
+
+    $scope.disabledCheckOut = function () {
+        alert("Для оформления заказа необходимо залогинится");
+    }
+
     $scope.loadCart();
 });

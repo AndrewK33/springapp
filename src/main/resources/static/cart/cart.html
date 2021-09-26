@@ -1,7 +1,8 @@
 <div>
     <p></p>
     <h3>Корзина</h3>
-    <table class="table">
+    <span ng-show="cart.items.length == 0">Корзина пуста</span>
+    <table class="table" ng-show="cart.items.length > 0">
         <thead>
         <tr>
             <td>Название</td>
@@ -28,4 +29,9 @@
         </tr>
         </tbody>
     </table>
+
+    <p></p>
+    <button class="btn btn-primary" ng-click="checkOut()" ng-show="isUserLoggedIn() && cart.items.length > 0">Оформить заказ</button>
+    <button class="btn btn-secondary" ng-click="disabledCheckOut()" ng-show="!isUserLoggedIn() && cart.items.length > 0">Оформить заказ</button>
+
 </div>
