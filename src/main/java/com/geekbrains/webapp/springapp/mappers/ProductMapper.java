@@ -12,6 +12,9 @@ public interface ProductMapper {
 
     List<ProductDto> map(List<Product> product);
 
+
     @Mapping(source = "category.title", target = "categoryTitle")
     ProductDto map(Product product);
+
+
 }

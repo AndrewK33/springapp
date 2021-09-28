@@ -18,9 +18,9 @@ public class MarketError {
         this.date = new Date();
     }
 
-    public MarketError(String message) {
+    /*public MarketError(String message) {
         this(List.of(message));
-    }
+    }*/
 
     public MarketError(String... messages) {
         this(Arrays.asList(messages));

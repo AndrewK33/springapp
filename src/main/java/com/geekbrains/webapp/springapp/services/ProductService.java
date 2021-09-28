@@ -5,23 +5,25 @@ import com.geekbrains.webapp.springapp.exceptions.ResourceNotFoundException;
 import com.geekbrains.webapp.springapp.models.Category;
 import com.geekbrains.webapp.springapp.models.Product;
 import com.geekbrains.webapp.springapp.repositories.ProductRepository;
+import com.geekbrains.webapp.springapp.soap.entities.product.ProductWs;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+
 
 
     public Page<Product> findAll(int pageIndex, int pageSize) {
@@ -67,4 +69,19 @@ public class ProductService {
     public Optional<Product> findByTitle(String title) {
         return productRepository.findByTitle(title);
     }
+
+
+    public static final Function<Product, ProductWs> functionEntityToSoap = product -> {
+        ProductWs productWs = new ProductWs();
+        productWs.setId(product.getId());
+        productWs.setTitle(product.getTitle());
+        productWs.setPrice(product.getPrice());
+        productWs.setCategoryTitle(product.getCategory().getTitle());
+        return productWs;
+    };
+
+    public List<ProductWs> getAllProductsForSoap() {
+        return productRepository.findAll().stream().map(functionEntityToSoap).collect(Collectors.toList());
+    }
+
 }
