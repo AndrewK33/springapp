@@ -71,6 +71,8 @@ public class ProductService {
     }
 
 
+
+
     public static final Function<Product, ProductWs> functionEntityToSoap = product -> {
         ProductWs productWs = new ProductWs();
         productWs.setId(product.getId());
