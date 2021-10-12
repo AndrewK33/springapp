@@ -8,6 +8,7 @@ import com.geekbrains.webapp.springapp.models.Product;
 import com.geekbrains.webapp.springapp.services.CategoryService;
 import com.geekbrains.webapp.springapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,13 @@ import java.util.List;
 @RestController
 @RequestMapping ("/api/v1/products")
 @RequiredArgsConstructor
+
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
+
+
 
 
 

@@ -26,4 +26,6 @@ public class Product {
     private Category category;
 
 
+    public Product(long l, String borjomi, int i, String aNull) {
+    }
 }

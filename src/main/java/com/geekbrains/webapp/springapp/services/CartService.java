@@ -17,7 +17,6 @@ import java.security.Principal;
 public class CartService {
     private final ProductService productService;
     private final RedisTemplate<String, Object> redisTemplate;
-    //RequestContextHolder.currentRequestAttributes().getSessionId(); уникальный ключ в пределах сессии
     private static final String REDIS_CART_PREFIX = "WEB_APP_MARKET_CART_";
 
     private String getCartKey(Principal principal, String uuid) {
